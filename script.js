@@ -1,5 +1,5 @@
 const form = document.getElementById('search-form');
-const cityInput = document.getElementById('city');
+const cityInput = document.getElementById('city-input');
 const weatherInfo = document.getElementById('weather-info');
 const cityPhoto = document.getElementById('city-photo');
 
