@@ -18,6 +18,7 @@ function getWeather(city) {
     // Tworzymy URL zapytania do API
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
+
     // Wysyłamy zapytanie HTTP GET za pomocą fetch
     fetch(apiUrl)
         .then(response => {
@@ -30,7 +31,7 @@ function getWeather(city) {
         })
         .then(data => {
             // Przetwarzamy otrzymane dane o pogodzie
-            displayWeather(data);
+            displayWeather(data); // Wyświetlamy dane o pogodzie
         })
         .catch(error => {
             // Obsługujemy błędy sieciowe lub błędy związane z przetwarzaniem danych
