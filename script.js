@@ -39,9 +39,24 @@ function getWeather(city) {
 }
 
 function displayWeather(data) {
-    // Tutaj możemy wyświetlić dane o pogodzie na stronie
-    console.log(data);
+    // Wybieramy interesujące nas informacje o pogodzie z obiektu 'data'
+    const cityName = data.name;
+    const weatherDescription = data.weather[0].description;
+    const temperature = Math.round(data.main.temp - 273.15); // Konwersja z kelwinów na stopnie Celsiusza
+    const humidity = data.main.humidity;
+
+    // Tworzymy szablon HTML z wybranymi informacjami o pogodzie
+    const weatherHtml = `
+        <h2>${cityName}</h2>
+        <p>Weather: ${weatherDescription}</p>
+        <p>Temperature: ${temperature}°C</p>
+        <p>Humidity: ${humidity}%</p>
+    `;
+
+    // Wyświetlamy informacje o pogodzie na stronie w elemencie o id 'weather-info'
+    weatherInfo.innerHTML = weatherHtml;
 }
+
 
 
 function getCityPhoto(city) {
