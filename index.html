@@ -98,7 +98,12 @@
     document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            const city = cityInput.value;
+            let city = cityInput.value;
+            // Sprawdź, czy ostatni znak w ciągu znaków to spacja
+            if (city.charAt(city.length - 1) === ' ') {
+              // Usuń białe znaki z końca nazwy miasta
+              city = city.trimEnd();
+        }
             console.log('City:', city);
             clearErrorMessage(); // Wyczyść poprzedni komunikat o błędzie
             getWeather(city);
@@ -115,7 +120,6 @@
             errorElement.innerHTML = '';
         }
     }
-
     function getWeather(city) {
       // Sprawdź, czy wpisana nazwa miasta nie zawiera samych spacji
       if (city.trim() === '') {
@@ -147,6 +151,7 @@
               clearWeatherInfo();
           });
   }
+  
   
 
     function getCityPhoto(city) {
