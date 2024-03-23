@@ -173,7 +173,7 @@
               } else {
                   // Nie znaleziono zdjęcia miasta, sprawdź, czy jest komunikat o błędzie
                   const errorMessage = document.getElementById('error-message');
-                  if (!errorMessage.textContent) {
+                  if (errorMessage.textContent) {
                       // Brak komunikatu o błędzie, więc wyświetl zdjęcie symbolizujące błąd
                       const errorImageUrl = 'https://via.placeholder.com/150?text=Error';
                       displayCityPhoto(errorImageUrl);
