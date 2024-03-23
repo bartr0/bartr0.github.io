@@ -43,8 +43,21 @@
         cursor: pointer;
     }
     
-    #weather-info, #city-photo {
+    #weather-info,
+    #city-photo {
         margin-top: 20px;
+    }
+    
+    /* Media queries */
+    @media only screen and (max-width: 600px) {
+        .container {
+            max-width: 100%;
+            padding: 10px;
+        }
+    
+        input[type="text"] {
+            width: 100%;
+        }
     }
     
     </style>
