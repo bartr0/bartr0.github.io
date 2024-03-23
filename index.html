@@ -51,6 +51,7 @@
     #weather-info,
     #city-photo {
         margin-top: 20px;
+        text-align: center;
     }
     
     /* Media queries */
@@ -87,69 +88,100 @@
     const weatherInfo = document.getElementById('weather-info');
     const cityPhoto = document.getElementById('city-photo');
 
-
     document.addEventListener('DOMContentLoaded', function() {
-      form.addEventListener('submit', function(event) {
-          event.preventDefault();
-          const city = cityInput.value;
-          console.log('City:', city);
-          clearErrorMessage(); // Wyczyść poprzedni komunikat o błędzie
-          getWeather(city);
-          cityInput.value = '';
-      });
-  });
-  
-  function clearErrorMessage() {
-      // Znajdź element, w którym wyświetlasz komunikat o błędzie
-      const errorElement = document.getElementById('error-message');
-      // Jeśli taki element istnieje, wyczyść jego zawartość
-      if (errorElement) {
-          errorElement.innerHTML = '';
-      }
-  }
-  
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = cityInput.value;
+            console.log('City:', city);
+            clearErrorMessage(); // Wyczyść poprzedni komunikat o błędzie
+            getWeather(city);
+            getCityPhoto(city); // Pobierz zdjęcie miasta
+            cityInput.value = '';
+        });
+    });
+
+    function clearErrorMessage() {
+        // Znajdź element, w którym wyświetlasz komunikat o błędzie
+        const errorElement = document.getElementById('error-message');
+        // Jeśli taki element istnieje, wyczyść jego zawartość
+        if (errorElement) {
+            errorElement.innerHTML = '';
+        }
+    }
 
     function getWeather(city) {
-      const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
-      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+        const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
+        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`We couldn't find any information about a place like ${city} in our database`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.cod && data.cod !== 200) {
+                    throw new Error(data.message); // Rzuć wyjątek z wiadomością błędu
+                }
+                displayWeather(data);
+            })
+            .catch(error => {
+                console.error(`We couldn't find any information about a place like ${city} in our database`, error);
+                // Wyświetl komunikat dla użytkownika
+                displayErrorMessage(error.message);
+                // Wyczyść informacje o pogodzie i zdjęcie miasta
+                clearWeatherInfo();
+            });
+    }
+
+    function getCityPhoto(city) {
+      const apiKey = '43030663-7ba19e0d2fe04cea7912fdc25';
+      const formattedCity = `${city} city`; // Dodanie słowa "city" do nazwy miasta
+      const apiUrl = `https://pixabay.com/api/?key=${apiKey}&q=${formattedCity}&image_type=photo`;
   
       fetch(apiUrl)
           .then(response => {
               if (!response.ok) {
-                  throw new Error(`We couldn't find any information about a place like ${city} in our database`);
+                  throw new Error('Failed to fetch city photo');
               }
               return response.json();
           })
           .then(data => {
-              if (data.cod && data.cod !== 200) {
-                  throw new Error(data.message); // Rzuć wyjątek z wiadomością błędu
+              if (data.hits.length > 0) {
+                  const cityImageUrl = data.hits[0].webformatURL;
+                  displayCityPhoto(cityImageUrl);
+              } else {
+                  // Nie znaleziono zdjęcia miasta, sprawdź, czy jest komunikat o błędzie
+                  const errorMessage = document.getElementById('error-message');
+                  if (!errorMessage.textContent) {
+                      // Brak komunikatu o błędzie, więc wyświetl zdjęcie symbolizujące błąd
+                      const errorImageUrl = 'https://via.placeholder.com/150?text=Error';
+                      displayCityPhoto(errorImageUrl);
+                  }
               }
-              displayWeather(data);
           })
           .catch(error => {
-              console.error(`We couldn't find any information about a place like ${city} in our database`, error);
-              // Wyświetl komunikat dla użytkownika
-              displayErrorMessage(error.message);
-              // Wyczyść informacje o pogodzie i zdjęcie miasta
-              clearWeatherInfo();
+              console.error('Error fetching city photo:', error);
           });
-  }
+    }
   
-    
+    function displayCityPhoto(imageUrl) {
+        cityPhoto.innerHTML = `<img src="${imageUrl}" alt="City photo">`;
+    }
+
     function clearWeatherInfo() {
         // Wyczyść informacje o pogodzie
         weatherInfo.innerHTML = '';
         // Wyczyść zdjęcie miasta
         cityPhoto.innerHTML = '';
     }
-  
-  
+
     function displayErrorMessage(message) {
         // Wyświetl komunikat dla użytkownika, np. w elemencie z id 'error-message'
         const errorMessageElement = document.getElementById('error-message');
         errorMessageElement.textContent = message;
     }
-  
 
     function displayWeather(data) {
         const cityName = data.name;
@@ -166,9 +198,6 @@
 
         weatherInfo.innerHTML = weatherHtml;
     }
-
-    // Funkcja getCityPhoto(city) - implementuj odpowiednio, aby pobierała zdjęcie miasta i wyświetlała je na stronie
-
 
   </script>
 </body>
