@@ -117,30 +117,37 @@
     }
 
     function getWeather(city) {
-        const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`We couldn't find any information about a place like ${city} in our database`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.cod && data.cod !== 200) {
-                    throw new Error(data.message); // Rzuć wyjątek z wiadomością błędu
-                }
-                displayWeather(data);
-            })
-            .catch(error => {
-                console.error(`We couldn't find any information about a place like ${city} in our database`, error);
-                // Wyświetl komunikat dla użytkownika
-                displayErrorMessage(error.message);
-                // Wyczyść informacje o pogodzie i zdjęcie miasta
-                clearWeatherInfo();
-            });
-    }
+      // Sprawdź, czy wpisana nazwa miasta nie zawiera samych spacji
+      if (city.trim() === '') {
+          displayErrorMessage('Please enter a city name');
+          return; // Przerwij funkcję, jeśli nazwa miasta zawiera same spacje
+      }
+  
+      const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+  
+      fetch(apiUrl)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`We couldn't find any information about a place like ${city} in our database`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              if (data.cod && data.cod !== 200) {
+                  throw new Error(data.message); // Rzuć wyjątek z wiadomością błędu
+              }
+              displayWeather(data);
+          })
+          .catch(error => {
+              console.error(`We couldn't find any information about a place like ${city} in our database`, error);
+              // Wyświetl komunikat dla użytkownika
+              displayErrorMessage(error.message);
+              // Wyczyść informacje o pogodzie i zdjęcie miasta
+              clearWeatherInfo();
+          });
+  }
+  
 
     function getCityPhoto(city) {
       const apiKey = '43030663-7ba19e0d2fe04cea7912fdc25';
