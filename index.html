@@ -28,11 +28,15 @@
     
     form {
         margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     input[type="text"] {
         padding: 10px;
-        width: 70%;
+        width: calc(100% - 120px);
+        margin-right: 10px;
     }
     
     button {
@@ -41,6 +45,7 @@
         color: #fff;
         border: none;
         cursor: pointer;
+        flex: 0 0 auto;
     }
     
     #weather-info,
@@ -50,16 +55,16 @@
     
     /* Media queries */
     @media only screen and (max-width: 600px) {
-        .container {
-            max-width: 100%;
-            padding: 10px;
+        input[type="text"] {
+            width: calc(100% - 20px);
+            margin-right: 0;
+            margin-bottom: 10px;
         }
     
-        input[type="text"] {
-            width: 100%;
+        button {
+            width: calc(100% - 20px);
         }
     }
-    
     </style>
 
 </head>
