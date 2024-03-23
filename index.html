@@ -77,6 +77,7 @@
           <button type="submit">Search</button>
       </form>
       <div id="weather-info"></div>
+      <div id="error-message" style="color: red; text-align: center;"></div>
       <div id="city-photo"></div>
   </div>
 
@@ -88,38 +89,67 @@
 
 
     document.addEventListener('DOMContentLoaded', function() {
-        const form = document.getElementById('search-form');
-        const cityInput = document.getElementById('city-input');
-        
-        form.addEventListener('submit', function(event) {   
-            event.preventDefault();
-            const city = cityInput.value;
-            console.log('City:', city);
-            getWeather(city);
-            // getCityPhoto(city); // Wywołaj funkcję getCityPhoto, jeśli jest dostępna
-            cityInput.value = '';
-        });
-    });
+      form.addEventListener('submit', function(event) {
+          event.preventDefault();
+          const city = cityInput.value;
+          console.log('City:', city);
+          clearErrorMessage(); // Wyczyść poprzedni komunikat o błędzie
+          getWeather(city);
+          cityInput.value = '';
+      });
+  });
+  
+  function clearErrorMessage() {
+      // Znajdź element, w którym wyświetlasz komunikat o błędzie
+      const errorElement = document.getElementById('error-message');
+      // Jeśli taki element istnieje, wyczyść jego zawartość
+      if (errorElement) {
+          errorElement.innerHTML = '';
+      }
+  }
+  
 
     function getWeather(city) {
-        const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
-        const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-
-        fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                displayWeather(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-                // Dodaj kod obsługi błędów, np. wyświetlanie komunikatu dla użytkownika
-            });
+      const apiKey = '8e703ab4af69c7dee4a34ad2423d86a2';
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
+  
+      fetch(apiUrl)
+          .then(response => {
+              if (!response.ok) {
+                  throw new Error(`We couldn't find any information about a place like ${city} in our database`);
+              }
+              return response.json();
+          })
+          .then(data => {
+              if (data.cod && data.cod !== 200) {
+                  throw new Error(data.message); // Rzuć wyjątek z wiadomością błędu
+              }
+              displayWeather(data);
+          })
+          .catch(error => {
+              console.error(`We couldn't find any information about a place like ${city} in our database`, error);
+              // Wyświetl komunikat dla użytkownika
+              displayErrorMessage(error.message);
+              // Wyczyść informacje o pogodzie i zdjęcie miasta
+              clearWeatherInfo();
+          });
+  }
+  
+    
+    function clearWeatherInfo() {
+        // Wyczyść informacje o pogodzie
+        weatherInfo.innerHTML = '';
+        // Wyczyść zdjęcie miasta
+        cityPhoto.innerHTML = '';
     }
+  
+  
+    function displayErrorMessage(message) {
+        // Wyświetl komunikat dla użytkownika, np. w elemencie z id 'error-message'
+        const errorMessageElement = document.getElementById('error-message');
+        errorMessageElement.textContent = message;
+    }
+  
 
     function displayWeather(data) {
         const cityName = data.name;
