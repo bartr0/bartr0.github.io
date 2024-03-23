@@ -152,38 +152,39 @@
           });
   }
   
-  
-
-    function getCityPhoto(city) {
-      const apiKey = '43030663-7ba19e0d2fe04cea7912fdc25';
-      const formattedCity = `${city} city`; // Dodanie słowa "city" do nazwy miasta
-      const apiUrl = `https://pixabay.com/api/?key=${apiKey}&q=${formattedCity}&image_type=photo`;
-  
-      fetch(apiUrl)
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error('Failed to fetch city photo');
-              }
-              return response.json();
-          })
-          .then(data => {
-              if (data.hits.length > 0) {
-                  const cityImageUrl = data.hits[0].webformatURL;
-                  displayCityPhoto(cityImageUrl);
-              } else {
-                  // Nie znaleziono zdjęcia miasta, sprawdź, czy jest komunikat o błędzie
-                  const errorMessage = document.getElementById('error-message');
-                  if (errorMessage.textContent) {
-                      // Brak komunikatu o błędzie, więc wyświetl zdjęcie symbolizujące błąd
-                      const errorImageUrl = 'https://via.placeholder.com/150?text=Error';
-                      displayCityPhoto(errorImageUrl);
-                  }
-              }
-          })
-          .catch(error => {
-              console.error('Error fetching city photo:', error);
-          });
+  function getCityPhoto(city, errorMessage) {
+    if (errorMessage && errorMessage.includes("We couldn't find any information about a place like")) {
+        // Jeśli komunikat o błędzie zawiera frazę "We couldn't find any information about a place like",
+        // nie wysyłaj zapytania o zdjęcie miasta
+        clearCityPhoto();
+        return;
     }
+
+    const apiKey = '43030663-7ba19e0d2fe04cea7912fdc25';
+    const formattedCity = `${city} city`; // Dodanie słowa "city" do nazwy miasta
+    const apiUrl = `https://pixabay.com/api/?key=${apiKey}&q=${formattedCity}&image_type=photo`;
+
+    fetch(apiUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to fetch city photo');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.hits.length > 0) {
+                const cityImageUrl = data.hits[0].webformatURL;
+                displayCityPhoto(cityImageUrl);
+            } else {
+                // Nie znaleziono zdjęcia miasta, więc nie wyświetlaj żadnego zdjęcia
+                clearCityPhoto();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching city photo:', error);
+        });
+    }
+
   
     function displayCityPhoto(imageUrl) {
         cityPhoto.innerHTML = `<img src="${imageUrl}" alt="City photo">`;
